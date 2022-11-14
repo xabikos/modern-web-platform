@@ -82,7 +82,7 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
 	endpoints.MapBffManagementEndpoints();
-	endpoints.MapControllers().AsBffApiEndpoint();
+	endpoints.MapControllers().AsBffApiEndpoint().RequireAuthorization();
 });
 
 app.MapGet("/", () => "Hello World!");
