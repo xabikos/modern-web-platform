@@ -10,5 +10,19 @@ namespace Identity.Data
             : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<ApplicationUser>()
+                .Property(p => p.Firstname)
+                .IsRequired()
+                .HasMaxLength(128);
+            builder.Entity<ApplicationUser>()
+                .Property(p => p.Lastname)
+                .IsRequired()
+                .HasMaxLength(128);
+
+            base.OnModelCreating(builder);
+        }
     }
 }
