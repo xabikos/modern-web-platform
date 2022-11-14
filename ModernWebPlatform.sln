@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity", "src\Identity\Id
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicWebApp", "src\PublicWebApp\PublicWebApp.csproj", "{C6A5B5C5-2788-4965-B6A3-D140904EAF4C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempIdentityServer", "src\TempIdentityServer\TempIdentityServer.csproj", "{D3856454-7595-4F20-B5D6-14A8E82D2761}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{C6A5B5C5-2788-4965-B6A3-D140904EAF4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6A5B5C5-2788-4965-B6A3-D140904EAF4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6A5B5C5-2788-4965-B6A3-D140904EAF4C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D3856454-7595-4F20-B5D6-14A8E82D2761}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D3856454-7595-4F20-B5D6-14A8E82D2761}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D3856454-7595-4F20-B5D6-14A8E82D2761}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D3856454-7595-4F20-B5D6-14A8E82D2761}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
