@@ -1,17 +1,25 @@
 //using Duende.Bff.EntityFramework;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.Win32;
+using NextjsStaticHosting.AspNetCore;
 using System.IdentityModel.Tokens.Jwt;
+using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-//builder.Services.AddAuthorization();
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
+
+// Step 1: Add Next.js hosting support
+builder.Services.Configure<NextjsStaticHostingOptions>(builder.Configuration.GetSection("NextjsStaticHosting"));
+builder.Services.AddNextjsStaticHosting();
 
 // Add BFF services to DI - also add server-side session management
 builder.Services.AddBff(options =>
 {
-	options.ManagementBasePath = "/bff";
+    options.ManagementBasePath = "/bff";
 });
 // Stores the session in a peramanent store instead of the cookie https://docs.duendesoftware.com/identityserver/v6/bff/session/server_side_sessions/  
 //.AddEntityFrameworkServerSideSessions(options => { });
@@ -23,7 +31,8 @@ builder.Services
 		options.DefaultChallengeScheme = "oidc";
 		options.DefaultSignOutScheme = "oidc";
 	})
-	.AddCookie("cookie", options => {
+	.AddCookie("cookie", options =>
+	{
 		// set session lifetime
 		options.ExpireTimeSpan = TimeSpan.FromHours(24);
 		// sliding or absolute
@@ -33,7 +42,8 @@ builder.Services
 		// strict SameSite handling
 		options.Cookie.SameSite = SameSiteMode.Strict;
 	})
-	.AddOpenIdConnect("oidc", options => {
+	.AddOpenIdConnect("oidc", options =>
+	{
 		// The URL of the identity server
 		options.Authority = "https://localhost:7001";
 		// confidential client using code flow + PKCE
@@ -69,22 +79,27 @@ if (app.Environment.IsDevelopment())
 }
 
 // https://learn.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-7.0#serve-default-documents
-app.UseDefaultFiles();
-app.UseStaticFiles();
+//app.UseDefaultFiles();
+//app.UseStaticFiles();
 
 app.UseRouting();
 app.UseAuthentication();
 
 app.UseBff();
-
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
 	endpoints.MapBffManagementEndpoints();
 	endpoints.MapControllers().AsBffApiEndpoint().SkipAntiforgery().RequireAuthorization();
+
+	// Step 2: Register dynamic endpoints to serve the correct HTML files at the right request paths.
+	// Endpoints are created dynamically based on HTML files found under the specified RootPath during startup.
+	// Endpoints are currently NOT refreshed if the files later change on disk.
+    endpoints.MapNextjsStaticHtmls();
 });
 
-app.MapGet("/", () => "Hello World!");
+// Step 3: Serve other required files (e.g. js, css files in the exported next.js app).
+app.UseNextjsStaticHosting();
 
 app.Run();
