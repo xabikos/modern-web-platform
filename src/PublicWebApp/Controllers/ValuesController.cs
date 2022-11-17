@@ -30,7 +30,7 @@ namespace PublicWebApp.Controllers
             client.SetBearerToken(token.AccessToken);
 
             // call remote API
-            var response = await client.GetAsync($"https://localhost:7000/WeatherForecast");
+            var response = await client.GetAsync($"https://localhost:44343/WeatherForecast");
             return new JsonResult(await response.Content.ReadAsStringAsync());
             //return new string[] { "value1", "value2" };
         }

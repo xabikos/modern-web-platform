@@ -45,7 +45,7 @@ builder.Services
 	.AddOpenIdConnect("oidc", options =>
 	{
 		// The URL of the identity server
-		options.Authority = "https://localhost:7001";
+		options.Authority = "https://localhost:44342";
 		// confidential client using code flow + PKCE
 		options.ClientId = "publicwebapp";
 		options.ClientSecret = "secret";

@@ -10,7 +10,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {
-        options.Authority = "https://localhost:7001";
+        options.Authority = "https://localhost:44342";
         options.TokenValidationParameters.ValidateAudience = false;
     });
 builder.Services.AddAuthorization(options =>

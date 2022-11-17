@@ -29,10 +29,10 @@ namespace Identity
 						AllowedGrantTypes = GrantTypes.Code,
                 
 						// where to redirect to after login
-						RedirectUris = { "https://localhost:7002/signin-oidc" },
+						RedirectUris = { "https://localhost:44387/signin-oidc" },
 
 						// where to redirect to after logout
-						PostLogoutRedirectUris = { "https://localhost:7002/signout-callback-oidc" },
+						PostLogoutRedirectUris = { "https://localhost:44387/signout-callback-oidc" },
 						
 						AllowOfflineAccess= true,
 
