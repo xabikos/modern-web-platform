@@ -1,8 +1,6 @@
 ﻿using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,7 +18,7 @@ namespace PublicWebApp.Controllers
         }
         // GET: api/<ValuesController>
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IEnumerable<string>> Get()
         {
             // create HTTP client
             var client = _httpClientFactory.CreateClient();
@@ -31,8 +29,7 @@ namespace PublicWebApp.Controllers
 
             // call remote API
             var response = await client.GetAsync($"https://localhost:44343/WeatherForecast");
-            return new JsonResult(await response.Content.ReadAsStringAsync());
-            //return new string[] { "value1", "value2" };
+            return await response.Content.ReadFromJsonAsync<string[]>();
         }
     }
 }

@@ -1,9 +1,6 @@
 //using Duende.Bff.EntityFramework;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.Win32;
 using NextjsStaticHosting.AspNetCore;
 using System.IdentityModel.Tokens.Jwt;
-using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 
