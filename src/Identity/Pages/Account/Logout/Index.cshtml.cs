@@ -1,6 +1,7 @@
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Services;
+using Identity.Models;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -17,14 +18,16 @@ namespace Identity.Pages.Account.Logout
     {
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IEventService _events;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         [BindProperty]
         public string LogoutId { get; set; }
 
-        public Index(IIdentityServerInteractionService interaction, IEventService events)
+        public Index(IIdentityServerInteractionService interaction, IEventService events, SignInManager<ApplicationUser> signInManager)
         {
             _interaction = interaction;
             _events = events;
+            _signInManager = signInManager;
         }
 
         public async Task<IActionResult> OnGet(string logoutId)
@@ -69,6 +72,7 @@ namespace Identity.Pages.Account.Logout
 
                 // delete local authentication cookie
                 await HttpContext.SignOutAsync();
+                await _signInManager.SignOutAsync();
 
                 // raise the logout event
                 await _events.RaiseAsync(new UserLogoutSuccessEvent(User.GetSubjectId(), User.GetDisplayName()));

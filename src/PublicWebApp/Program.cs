@@ -6,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 builder.Services.AddAuthorization();
-
 builder.Services.AddControllers();
 
 // Step 1: Add Next.js hosting support

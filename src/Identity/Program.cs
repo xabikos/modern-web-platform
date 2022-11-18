@@ -43,7 +43,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseIdentityServer();
-
 app.UseAuthorization();
 app.MapRazorPages().RequireAuthorization();
 
