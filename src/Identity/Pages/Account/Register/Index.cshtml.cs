@@ -1,7 +1,7 @@
-using Duende.IdentityServer.Events;
+﻿using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Stores;
 using Identity.Models;
+using Identity.Services;
 using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,20 +20,23 @@ namespace Identity.Pages.Account.Register
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IEventService _events;
+		private readonly IEmailService _emailService;
 
-        public IndexModel(
+		public IndexModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleInManager,
             IIdentityServerInteractionService interaction,
-            IEventService events)
+            IEventService events,
+			IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleInManager;
             _interaction = interaction;
             _events = events;
-        }
+			_emailService = emailService;
+		}
 
         [BindProperty]
         public RegisterViewModel Input { get; set; }
@@ -54,7 +57,6 @@ namespace Identity.Pages.Account.Register
                 {
                     UserName = Input.Email,
                     Email = Input.Email,
-                    EmailConfirmed = true,
                     Firstname = Input.Firstname,
                     Lastname = Input.Lastname,
                 };
@@ -85,7 +87,15 @@ namespace Identity.Pages.Account.Register
                     var loginresult = await _signInManager.PasswordSignInAsync(
                         Input.Email, Input.Password, false, lockoutOnFailure: true);
 
-                    if (loginresult.Succeeded)
+					// Send confirm email address mail
+					var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+					//var confirmationLink = Url.Page("Account/ConfirmEmail", "OnGet", new { token, email = user.Email }, Request.Scheme);
+
+					var confirmationLink = $"https://localhost:44342/Account/ConfirmEmail?token={token}&email={user.Email}";
+
+					await _emailService.SendAsync(user.Email, "Confirm Email", confirmationLink);
+
+					if (loginresult.Succeeded)
                     {
                         var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
                         var newUser = await _userManager.FindByNameAsync(Input.Email);

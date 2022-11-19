@@ -1,6 +1,7 @@
-using Identity;
+﻿using Identity;
 using Identity.Data;
 using Identity.Models;
+using Identity.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +32,9 @@ builder.Services.AddIdentityServer(options =>
 	.AddInMemoryApiScopes(IdentityConfig.ApiScopes)
 	.AddInMemoryClients(IdentityConfig.Clients)
     .AddAspNetIdentity<ApplicationUser>(); ;
+
+builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 var app = builder.Build();
 
