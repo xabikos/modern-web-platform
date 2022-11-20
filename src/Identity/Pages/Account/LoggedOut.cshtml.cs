@@ -3,17 +3,25 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Identity.Pages.Account.Logout
+namespace Identity.Pages.Account
 {
+	public class LoggedOutViewModel
+	{
+		public string PostLogoutRedirectUri { get; set; }
+		public string ClientName { get; set; }
+		public string SignOutIframeUrl { get; set; }
+		public bool AutomaticRedirectAfterSignOut { get; set; }
+	}
+
     [SecurityHeaders]
     [AllowAnonymous]
-    public class LoggedOut : PageModel
+    public class LoggedOutModel : PageModel
     {
         private readonly IIdentityServerInteractionService _interactionService;
 
         public LoggedOutViewModel View { get; set; }
 
-        public LoggedOut(IIdentityServerInteractionService interactionService)
+        public LoggedOutModel(IIdentityServerInteractionService interactionService)
         {
             _interactionService = interactionService;
         }

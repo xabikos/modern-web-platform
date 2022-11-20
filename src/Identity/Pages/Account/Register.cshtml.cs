@@ -7,13 +7,35 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace Identity.Pages.Account.Register
 {
+	public class RegisterViewModel
+	{
+		[Required]
+		[EmailAddress]
+		[Display(Name = "Email")]
+		public string? Email { get; set; }
+		[Required]
+		public string? Firstname { get; set; }
+		[Required]
+		public string? Lastname { get; set; }
+
+		[Required]
+		[DataType(DataType.Password)]
+		[Display(Name = "Password")]
+		public string? Password { get; set; }
+
+		public string? ReturnUrl { get; set; }
+
+	}
+
     [SecurityHeaders]
     [AllowAnonymous]
-    public class IndexModel : PageModel
+    public class RegisterModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -22,7 +44,7 @@ namespace Identity.Pages.Account.Register
         private readonly IEventService _events;
 		private readonly IEmailService _emailService;
 
-		public IndexModel(
+		public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleInManager,
@@ -89,7 +111,8 @@ namespace Identity.Pages.Account.Register
 
 					// Send confirm email address mail
 					var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-					var confirmationLink = Url.PageLink("/Account/ConfirmEmail/Index", null, new { token, email = user.Email }, Request.Scheme);
+                    var encodedToken = WebEncoders.Base64UrlEncode(System.Text.Encoding.UTF8.GetBytes(token));
+					var confirmationLink = Url.Page("/Account/ConfirmEmail", null, new { token, email = user.Email }, Request.Scheme);
 
 					await _emailService.SendAsync(user.Email, "Confirm Email", confirmationLink);
 

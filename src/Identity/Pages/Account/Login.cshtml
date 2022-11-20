@@ -1,5 +1,5 @@
 ﻿@page
-@model Identity.Pages.Account.Login.Index
+@model Identity.Pages.Account.LoginModel
 
 <div class="login-page">
     <div class="lead">
@@ -43,7 +43,7 @@
                                     </div>
                                 </div>
                             }
-                            <a asp-page="../Register/Index" asp-route-returnUrl="@Model.Input.ReturnUrl">
+                            <a asp-page="../Register" asp-route-returnUrl="@Model.Input.ReturnUrl">
                                 New User? Register
                             </a><br />
                             <button class="btn btn-primary" name="Input.Button" value="login">Login</button>

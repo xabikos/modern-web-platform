@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
@@ -9,10 +10,51 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Identity.Pages.Account.Login
+namespace Identity.Pages.Account
 {
+	public class InputModel
+	{
+		[Required]
+		public string Username { get; set; }
+
+		[Required]
+		public string Password { get; set; }
+
+		public bool RememberLogin { get; set; }
+
+		public string ReturnUrl { get; set; }
+
+		public string Button { get; set; }
+	}
+
+	public class LoginOptions
+	{
+		public static bool AllowLocalLogin = true;
+		public static bool AllowRememberLogin = true;
+		public static TimeSpan RememberMeLoginDuration = TimeSpan.FromDays(30);
+		public static string InvalidCredentialsErrorMessage = "Invalid username or password";
+	}
+
+	public class LoginViewModel
+	{
+		public bool AllowRememberLogin { get; set; } = true;
+		public bool EnableLocalLogin { get; set; } = true;
+
+		public IEnumerable<ExternalProvider> ExternalProviders { get; set; } = Enumerable.Empty<ExternalProvider>();
+		public IEnumerable<ExternalProvider> VisibleExternalProviders => ExternalProviders.Where(x => !String.IsNullOrWhiteSpace(x.DisplayName));
+
+		public bool IsExternalLoginOnly => EnableLocalLogin == false && ExternalProviders?.Count() == 1;
+		public string ExternalLoginScheme => IsExternalLoginOnly ? ExternalProviders?.SingleOrDefault()?.AuthenticationScheme : null;
+
+		public class ExternalProvider
+		{
+			public string DisplayName { get; set; }
+			public string AuthenticationScheme { get; set; }
+		}
+	}
+
     [AllowAnonymous]
-    public class Index : PageModel
+    public class LoginModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -26,7 +68,7 @@ namespace Identity.Pages.Account.Login
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public Index(
+        public LoginModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IIdentityServerInteractionService interaction,
