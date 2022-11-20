@@ -89,9 +89,7 @@ namespace Identity.Pages.Account.Register
 
 					// Send confirm email address mail
 					var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-					//var confirmationLink = Url.Page("Account/ConfirmEmail", "OnGet", new { token, email = user.Email }, Request.Scheme);
-
-					var confirmationLink = $"https://localhost:44342/Account/ConfirmEmail?token={token}&email={user.Email}";
+					var confirmationLink = Url.PageLink("/Account/ConfirmEmail/Index", null, new { token, email = user.Email }, Request.Scheme);
 
 					await _emailService.SendAsync(user.Email, "Confirm Email", confirmationLink);
 
