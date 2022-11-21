@@ -75,8 +75,6 @@ jobs:
         source: 'current'
         artifact: 'ModerWebPlatform'
         path: '$(Pipeline.Workspace)'
-    - script: 'ls'
-      displayName: 'Listing all files after download artifacts'
     - task: AzureWebApp@1
       inputs:
         azureSubscription: 'Azure connection'
@@ -85,3 +83,5 @@ jobs:
         resourceGroupName: 'modern-web-platform'
         package: '$(Pipeline.Workspace)/PublicWebApp.zip'
         deploymentMethod: 'auto'
+        appSettings:
+          -Services_Identity_Url https://modern-web-api.azurewebsites.net
