@@ -1,10 +1,20 @@
-//using Duende.Bff.EntityFramework;
+﻿//using Duende.Bff.EntityFramework;
+using Common;
+using Microsoft.Extensions.Options;
 using NextjsStaticHosting.AspNetCore;
 using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+// Register the IOptions object
+builder.Services.Configure<ServicesConfiguration>(
+	builder.Configuration.GetSection("Services"));
+// Explicitly register the settings object by delegating to the IOptions object
+builder.Services.AddSingleton(resolver =>
+		resolver.GetRequiredService<IOptions<ServicesConfiguration>>().Value);
+
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
@@ -40,11 +50,12 @@ builder.Services
 	})
 	.AddOpenIdConnect("oidc", options =>
 	{
+		var servicesConfig = builder.Configuration.GetRequiredSection("Services").Get<ServicesConfiguration>();
 		// The URL of the identity server
-		options.Authority = "https://localhost:44342";
+		options.Authority = servicesConfig.Identity.Url;
 		// confidential client using code flow + PKCE
-		options.ClientId = "publicwebapp";
-		options.ClientSecret = "secret";
+		options.ClientId = Common.PublicWebApp.ClientId;
+		options.ClientSecret = servicesConfig.PublicWebApp.Secret;
 		options.ResponseType = "code";
 
 		// query response type is compatible with strict SameSite mode

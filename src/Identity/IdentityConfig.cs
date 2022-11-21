@@ -19,30 +19,32 @@ namespace Identity
 					new ApiScope("core_domain_API", "The core domain API that holds all the business logic")
 				};
 
-		public static IEnumerable<Client> Clients =>
-			new Client[]
-				{
-					new Client {
-						ClientId = "publicwebapp",
-						ClientSecrets = { new Secret("secret".Sha256()) },
+		public static IEnumerable<Client> GetClients(Common.PublicWebApp publicWebApp)
+		{
+			return new Client[]
+			{
+				new Client {
+					ClientId = Common.PublicWebApp.ClientId,
+					ClientSecrets = { new Secret(publicWebApp.Secret.Sha256()) },
 
-						AllowedGrantTypes = GrantTypes.Code,
+					AllowedGrantTypes = GrantTypes.Code,
                 
-						// where to redirect to after login
-						RedirectUris = { "https://localhost:44387/signin-oidc" },
+					// where to redirect to after login
+					RedirectUris = { publicWebApp.RedirectURI },
 
-						// where to redirect to after logout
-						PostLogoutRedirectUris = { "https://localhost:44387/signout-callback-oidc" },
-						
-						AllowOfflineAccess= true,
+					// where to redirect to after logout
+					PostLogoutRedirectUris = { publicWebApp.PostLogoutRedirectUris },
 
-						AllowedScopes = new List<string>
-						{
-							IdentityServerConstants.StandardScopes.OpenId,
-							IdentityServerConstants.StandardScopes.Profile,
-                            "core_domain_API"
-                        }
+					AllowOfflineAccess= true,
+
+					AllowedScopes = new List<string>
+					{
+						IdentityServerConstants.StandardScopes.OpenId,
+						IdentityServerConstants.StandardScopes.Profile,
+						"core_domain_API"
 					}
-				};
+				}
+			};
+		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using IdentityModel.Client;
+﻿using Common;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,12 +11,13 @@ namespace PublicWebApp.Controllers
     public class ValuesController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;
+		private readonly ServicesConfiguration _config;
 
-
-        public ValuesController(IHttpClientFactory httpClientFactory)
+		public ValuesController(IHttpClientFactory httpClientFactory, ServicesConfiguration config)
         {
             _httpClientFactory = httpClientFactory;
-        }
+			_config = config;
+		}
         // GET: api/<ValuesController>
         [HttpGet]
         public async Task<IEnumerable<string>> Get()
@@ -28,7 +30,7 @@ namespace PublicWebApp.Controllers
             client.SetBearerToken(token.AccessToken);
 
             // call remote API
-            var response = await client.GetAsync($"https://localhost:44343/WeatherForecast");
+            var response = await client.GetAsync($"{_config.CoreDomainAPI.Url}WeatherForecast");
             return await response.Content.ReadFromJsonAsync<string[]>();
         }
     }
