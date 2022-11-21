@@ -18,7 +18,7 @@ namespace Identity.Pages.Account
 {
 	[AllowAnonymous]
 	public class ForgotPasswordModel : PageModel
-    {
+	{
 		public class InputModel
 		{
 			[Required]

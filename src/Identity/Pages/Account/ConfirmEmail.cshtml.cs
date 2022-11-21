@@ -19,7 +19,7 @@ namespace Identity.Pages.Account
 			_userManager = userManager;
 		}
 		public async Task<IActionResult> OnGet(string token, string email)
-        {
+		{
 			var user = await _userManager.FindByEmailAsync(email);
 			if (user == null)
 				return RedirectToPage("Error");
@@ -36,5 +36,5 @@ namespace Identity.Pages.Account
 				return Page();
 			}
 		}
-    }
+	}
 }

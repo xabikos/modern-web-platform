@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Duende.IdentityServer.Models;
-using Identity.Models;
+﻿using Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace Identity.Pages.Account
 {
 
 	[AllowAnonymous]
 	public class ResetPasswordModel : PageModel
-    {
+	{
 		public class InputModel
 		{
 			[Required]
@@ -49,7 +44,7 @@ namespace Identity.Pages.Account
 		public InputModel Input { get; set; } = default!;
 
 		public IActionResult OnGet(string? token = null)
-        {
+		{
 			if (token == null)
 			{
 				return BadRequest("A code must be supplied for password reset.");

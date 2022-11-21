@@ -10,9 +10,9 @@ namespace Identity.Pages.Account
 {
 	[AllowAnonymous]
 	public class ForgotPasswordConfirmationModel : PageModel
-    {
-        public void OnGet()
-        {
-        }
-    }
+	{
+		public void OnGet()
+		{
+		}
+	}
 }
