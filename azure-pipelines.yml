@@ -4,14 +4,59 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- main
+  - main
 
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  buildConfiguration: 'Release'
+jobs:
+  - job: build_client_server_and_create_artifacts
+    displayName: 'Builds client and server side and publishes everything'
+    variables:
+      buildConfiguration: 'Release'
+    steps:
+      - task: Npm@1
+        displayName: 'Installing node packages for client app'
+        inputs:
+          command: 'install'
+          workingDir: 'src/PublicWebApp/client-app'
+      - task: Npm@1
+        displayName: 'Creating the static version of the website'
+        inputs:
+          command: 'custom'
+          customCommand: 'run export'
+          workingDir: 'src/PublicWebApp/client-app'
+      - task: CopyFiles@2
+        displayName: 'Copy the static files to wwwroot folder of the public webste'
+        inputs:
+          SourceFolder: 'src/PublicWebApp/client-app/out'
+          Contents: '**'
+          TargetFolder: 'src/PublicWebApp/wwwroot'
 
-steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+      - task: UseDotNet@2
+        displayName: 'Installing .NET 7'
+        inputs:
+          packageType: 'sdk'
+          version: '7.x'
+      - task: DotNetCoreCLI@2
+        displayName: 'Building main solution'
+        inputs:
+          command: 'build'
+          arguments: '--configuration $(buildConfiguration)'
+      - task: DotNetCoreCLI@2
+        displayName: 'Pulibsh all projects'
+        inputs:
+          command: 'publish'
+          projects: |
+            src/CoreDomainApi/CoreDomainApi.csproj
+            src/Identity/Identity.csproj
+            src/PublicWebApp/PublicWebApp.csproj
+          arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+          zipAfterPublish: true
+          publishWebProjects: false
+          modifyOutputPath: true
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publishes the artifacts of the build'
+        inputs:
+          targetPath: '$(Build.ArtifactStagingDirectory)'
+          artifactName: 'ModerWebPlatform'
