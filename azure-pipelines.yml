@@ -60,3 +60,28 @@ jobs:
         inputs:
           targetPath: '$(Build.ArtifactStagingDirectory)'
           artifactName: 'ModerWebPlatform'
+
+  - job: deploy
+    dependsOn: build_client_server_and_create_artifacts
+    condition: succeeded()
+
+    pool:
+      vmImage: ubuntu-latest
+
+    steps:
+      # download the artifact drop from the previous job
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        source: 'current'
+        artifact: 'ModerWebPlatform'
+        path: '$(Pipeline.Workspace)'
+    - script: 'ls'
+      displayName: 'Listing all files after download artifacts'
+    - task: AzureWebApp@1
+      inputs:
+        azureSubscription: 'Azure connection'
+        appType: 'webApp'
+        appName: 'modern-web-webiste'
+        resourceGroupName: 'modern-web-platform'
+        package: '$(Pipeline.Workspace)/PublicWebApp.zip'
+        deploymentMethod: 'auto'
