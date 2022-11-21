@@ -2,7 +2,7 @@ import useSWR from 'swr'
 
 const useValues = () => {
 
-  const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
+  const fetcher = (url : string) => fetch(url).then(res => res.json())
 
   const { data, error } = useSWR('/api/values', fetcher)
   return {

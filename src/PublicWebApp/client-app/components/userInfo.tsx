@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { use, useState } from 'react';
+import { useState } from 'react';
 import useSWR from 'swr'
 
 const useUser = () => {
@@ -7,7 +7,7 @@ const useUser = () => {
     'x-csrf': '1'
   }
 
-  const fetcher = async (url, headers) => {
+  const fetcher = async (url : string, headers : any ) => {
     const response = await fetch(url, { headers })
 
     if (!response.ok) {
@@ -39,7 +39,7 @@ export default function UserInfo() {
   }
   if (!isLoading && !isError && user && !isAuthenticated) {
     setIsAuthenticated(true)
-    setLogoutUrl(user.find(u => u.type === 'bff:logout_url').value)
+    setLogoutUrl(user.find((u : { type: string; }) => u.type === 'bff:logout_url').value)
   }
 
   if(!isAuthenticated) {
@@ -48,7 +48,7 @@ export default function UserInfo() {
       )
     }
     else {
-      const userName = user.find(u => u.type === 'name').value
+      const userName = user.find((u : { type: string; }) => u.type === 'name').value
       return (
         <div>
           <span>
