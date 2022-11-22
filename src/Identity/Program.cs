@@ -46,6 +46,8 @@ builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 var app = builder.Build();
 
+MigrateDatabase(app);
+
 if (app.Environment.IsDevelopment())
 {
 	app.UseDeveloperExceptionPage();
@@ -59,3 +61,14 @@ app.UseAuthorization();
 app.MapRazorPages().RequireAuthorization();
 
 app.Run();
+
+static void MigrateDatabase(WebApplication app)
+{
+	using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
+	{
+		var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+		context.Database.Migrate();
+	}
+}
+
+
