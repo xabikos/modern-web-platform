@@ -2,9 +2,13 @@ import useSWR from 'swr'
 
 const useValues = () => {
 
-  const fetcher = (url : string) => fetch(url).then(res => res.json())
+  const headers = {
+    'x-csrf': '1'
+  }
 
-  const { data, error } = useSWR('/api/values', fetcher)
+  const fetcher = (url : string, headers : any) => fetch(url, { headers }).then(res => res.json())
+
+  const { data, error } = useSWR(['/api/values', headers], fetcher)
   return {
     values: data,
     isLoading: !error && !data,
