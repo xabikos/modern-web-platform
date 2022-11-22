@@ -1,12 +1,14 @@
 ﻿//using Duende.Bff.EntityFramework;
 using Common;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
 using NextjsStaticHosting.AspNetCore;
 using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+IdentityModelEventSource.ShowPII = true;
 
 // Register the IOptions object
 builder.Services.Configure<ServicesConfiguration>(
