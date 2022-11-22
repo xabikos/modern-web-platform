@@ -59,10 +59,10 @@ if (app.Environment.IsDevelopment())
 {
 	app.UseDeveloperExceptionPage();
 }
-
+app.UseDeveloperExceptionPage();
 if (app.Environment.IsDevelopment())
 {
-	app.UseDeveloperExceptionPage();
+	
 	app.UseForwardedHeaders();
 }
 else
