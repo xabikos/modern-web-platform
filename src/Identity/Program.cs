@@ -3,6 +3,7 @@ using Identity;
 using Identity.Data;
 using Identity.Models;
 using Identity.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -15,6 +16,12 @@ builder.Services.Configure<ServicesConfiguration>(
 // Explicitly register the settings object by delegating to the IOptions object
 builder.Services.AddSingleton(resolver =>
 		resolver.GetRequiredService<IOptions<ServicesConfiguration>>().Value);
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+	options.ForwardedHeaders =
+		ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
 
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
@@ -53,6 +60,18 @@ if (app.Environment.IsDevelopment())
 	app.UseDeveloperExceptionPage();
 }
 
+if (app.Environment.IsDevelopment())
+{
+	app.UseDeveloperExceptionPage();
+	app.UseForwardedHeaders();
+}
+else
+{
+	app.UseForwardedHeaders();
+	app.UseHsts();
+}
+
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
