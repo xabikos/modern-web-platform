@@ -80,10 +80,10 @@ builder.Services
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
 	app.UseDeveloperExceptionPage();
-}
+//}
 
 // https://learn.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-7.0#serve-default-documents
 //app.UseDefaultFiles();
@@ -98,7 +98,7 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
 	endpoints.MapBffManagementEndpoints();
-	endpoints.MapControllers().AsBffApiEndpoint().SkipAntiforgery().RequireAuthorization();
+	endpoints.MapControllers().AsBffApiEndpoint().RequireAuthorization();
 
 	// Step 2: Register dynamic endpoints to serve the correct HTML files at the right request paths.
 	// Endpoints are created dynamically based on HTML files found under the specified RootPath during startup.
