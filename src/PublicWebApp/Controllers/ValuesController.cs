@@ -37,7 +37,7 @@ namespace PublicWebApp.Controllers
 				{
 					var resp = await response.Content.ReadAsStringAsync();
 					return new List<string>() {
-						$"token used: {token}",
+						$"token used: {token.AccessToken}",
 						$"result code: {response.StatusCode}",
 						$"response: {resp}"
 					};

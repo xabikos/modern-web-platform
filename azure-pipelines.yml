@@ -5,6 +5,7 @@
 
 trigger:
   - main
+  - debug-api-call
 
 pool:
   vmImage: ubuntu-latest
