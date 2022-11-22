@@ -36,11 +36,15 @@ namespace PublicWebApp.Controllers
 				if (!response.IsSuccessStatusCode)
 				{
 					var resp = await response.Content.ReadAsStringAsync();
-					return new List<string>() {
+					var headers = response.RequestMessage.Headers.Select(h => $"header key: {h.Key} value: {h.Value}");
+					var result = new List<string>() {
+						$"requested URL: {_config.CoreDomainAPI.Url}WeatherForecast",
 						$"token used: {token.AccessToken}",
 						$"result code: {response.StatusCode}",
 						$"response: {resp}"
 					};
+					result.AddRange(headers);
+					return result;
 				}
 				return await response.Content.ReadFromJsonAsync<string[]>();
 
