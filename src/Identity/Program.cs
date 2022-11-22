@@ -46,7 +46,7 @@ builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 var app = builder.Build();
 
-//MigrateDatabase(app);
+MigrateDatabase(app);
 
 if (app.Environment.IsDevelopment())
 {
