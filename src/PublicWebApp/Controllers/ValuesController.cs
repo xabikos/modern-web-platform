@@ -29,9 +29,26 @@ namespace PublicWebApp.Controllers
             var token = await HttpContext.GetUserAccessTokenAsync();
             client.SetBearerToken(token.AccessToken);
 
-            // call remote API
-            var response = await client.GetAsync($"{_config.CoreDomainAPI.Url}WeatherForecast");
-            return await response.Content.ReadFromJsonAsync<string[]>();
+			// call remote API
+			try
+			{
+				var response = await client.GetAsync($"{_config.CoreDomainAPI.Url}WeatherForecast");
+				if (!response.IsSuccessStatusCode)
+				{
+					var resp = await response.Content.ReadAsStringAsync();
+					return new List<string>() {
+						$"token used: {token}",
+						$"result code: {response.StatusCode}",
+						$"response: {resp}"
+					};
+				}
+				return await response.Content.ReadFromJsonAsync<string[]>();
+
+			}
+			catch (Exception)
+			{
+				throw;
+			}
         }
     }
 }

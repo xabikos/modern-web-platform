@@ -48,10 +48,10 @@ var app = builder.Build();
 
 MigrateDatabase(app);
 
-//if (app.Environment.IsDevelopment())
-//{
+if (app.Environment.IsDevelopment())
+{
 	app.UseDeveloperExceptionPage();
-//}
+}
 
 app.UseStaticFiles();
 app.UseRouting();

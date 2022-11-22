@@ -87,10 +87,6 @@ if (app.Environment.IsDevelopment())
 	app.UseDeveloperExceptionPage();
 }
 
-// https://learn.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-7.0#serve-default-documents
-//app.UseDefaultFiles();
-//app.UseStaticFiles();
-
 app.UseRouting();
 app.UseAuthentication();
 
