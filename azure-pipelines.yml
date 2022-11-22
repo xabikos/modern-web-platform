@@ -84,7 +84,7 @@ jobs:
         appName: 'modern-web-identity'
         resourceGroupName: 'modern-web-platform'
         package: '$(Pipeline.Workspace)/Identity.zip'
-        deploymentMethod: 'auto'
+        deploymentMethod: 'zipDeploy'
         appSettings:
           -Services__Identity__Url https://modern-web-identity.azurewebsites.net
           -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
@@ -100,7 +100,7 @@ jobs:
         appName: 'modern-web-webiste'
         resourceGroupName: 'modern-web-platform'
         package: '$(Pipeline.Workspace)/PublicWebApp.zip'
-        deploymentMethod: 'auto'
+        deploymentMethod: 'zipDeploy'
         appSettings:
           -Services__Identity__Url https://modern-web-identity.azurewebsites.net
           -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
@@ -116,7 +116,7 @@ jobs:
         appName: 'modern-web-api'
         resourceGroupName: 'modern-web-platform'
         package: '$(Pipeline.Workspace)/CoreDomainApi.zip'
-        deploymentMethod: 'auto'
+        deploymentMethod: 'zipDeploy'
         appSettings:
           -Services__Identity__Url https://modern-web-identity.azurewebsites.net
           -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
