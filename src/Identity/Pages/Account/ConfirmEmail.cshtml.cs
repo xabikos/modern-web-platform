@@ -26,7 +26,7 @@ namespace Identity.Pages.Account
 			try
 			{
 				var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
-				var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+				var result = await _userManager.ConfirmEmailAsync(user, token);
 				ViewData["message"] = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
 				return Page();
 			}
