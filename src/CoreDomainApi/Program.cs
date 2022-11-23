@@ -21,13 +21,7 @@ builder.Services.AddAuthentication("Bearer")
 		options.Authority = options.Authority = builder.Configuration.GetRequiredSection("Services:Idendity:Url").Value;
 		options.TokenValidationParameters.ValidateAudience = false;
 	});
-builder.Services.AddAuthorization(options =>
-	options.AddPolicy("ApiScope", policy =>
-	{
-		policy.RequireAuthenticatedUser();
-		policy.RequireClaim("scope", "core_domain_API");
-	})
-);
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -43,6 +37,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers().RequireAuthorization("ApiScope");
+app.MapControllers();
 
 app.Run();
