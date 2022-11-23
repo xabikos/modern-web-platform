@@ -111,7 +111,6 @@ namespace Identity.Pages.Account.Register
 
 					// Send confirm email address mail
 					var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-					var encodedToken = WebEncoders.Base64UrlEncode(System.Text.Encoding.UTF8.GetBytes(token));
 					var confirmationLink = Url.Page("/Account/ConfirmEmail", null, new { token, email = user.Email }, Request.Scheme);
 
 					await _emailService.SendAsync(user.Email, "Confirm Email", confirmationLink);
@@ -122,19 +121,7 @@ namespace Identity.Pages.Account.Register
 						var newUser = await _userManager.FindByNameAsync(Input.Email);
 						await _events.RaiseAsync(new UserLoginSuccessEvent(newUser.UserName, newUser.Id, newUser.UserName, clientId: context?.Client.ClientId));
 
-						if (Url.IsLocalUrl(Input.ReturnUrl))
-						{
-							return Redirect(Input.ReturnUrl);
-						}
-						else if (string.IsNullOrEmpty(Input.ReturnUrl))
-						{
-							return Redirect("~/");
-						}
-						else
-						{
-							throw new Exception("invalid return URL");
-						}
-
+						return RedirectToPage("./AddPhoneNumber", new { returnUrl = Input.ReturnUrl });
 					}
 
 				}

@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Services;
 using Identity;
 using Identity.Data;
 using Identity.Models;
@@ -15,6 +16,7 @@ builder.Services.Configure<ServicesConfiguration>(
 // Explicitly register the settings object by delegating to the IOptions object
 builder.Services.AddSingleton(resolver =>
 		resolver.GetRequiredService<IOptions<ServicesConfiguration>>().Value);
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
@@ -42,7 +44,8 @@ builder.Services.AddIdentityServer(options =>
 	.AddAspNetIdentity<ApplicationUser>();
 
 builder.Services.AddTransient<IEmailService, EmailService>();
-builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
+builder.Services.AddTransient<ISmsService, SmsService>();
+
 
 var app = builder.Build();
 
