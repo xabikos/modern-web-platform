@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using System.Text;
 
 namespace Identity.Pages.Account.Register
 {
@@ -111,7 +112,8 @@ namespace Identity.Pages.Account.Register
 
 					// Send confirm email address mail
 					var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-					var confirmationLink = Url.Page("/Account/ConfirmEmail", null, new { token, email = user.Email }, Request.Scheme);
+					var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+					var confirmationLink = Url.Page("/Account/ConfirmEmail", null, new { token = encodedToken, email = user.Email }, Request.Scheme);
 
 					await _emailService.SendAsync(user.Email, "Confirm Email", confirmationLink);
 
