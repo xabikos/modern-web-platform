@@ -19,7 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication("Bearer")
 	.AddJwtBearer(options =>
 	{
-		options.Authority = builder.Configuration.GetRequiredSection("Services:Idendity:Url").Value;
+		options.Authority = builder.Configuration.GetRequiredSection("Services:Identity:Url").Value;
 		options.TokenValidationParameters.ValidateAudience = false;
 	});
 builder.Services.AddAuthorization();
