@@ -1,0 +1,131 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  - main
+  - bicep-deployment
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: build
+  displayName: Building and artifacts creation
+
+  jobs:
+    - job: build_client_server_and_create_artifacts
+      displayName: 'Builds client and server side and publishes everything'
+      variables:
+        buildConfiguration: 'Release'
+      steps:
+        - task: Npm@1
+          displayName: 'Installing node packages for client app'
+          inputs:
+            command: 'install'
+            workingDir: 'src/PublicWebApp/client-app'
+        - task: Npm@1
+          displayName: 'Creating the static version of the website'
+          inputs:
+            command: 'custom'
+            customCommand: 'run export'
+            workingDir: 'src/PublicWebApp/client-app'
+        - task: CopyFiles@2
+          displayName: 'Copy the static files to wwwroot folder of the public webste'
+          inputs:
+            SourceFolder: 'src/PublicWebApp/client-app/out'
+            Contents: '**'
+            TargetFolder: 'src/PublicWebApp/wwwroot'
+
+        - task: UseDotNet@2
+          displayName: 'Installing .NET 7'
+          inputs:
+            packageType: 'sdk'
+            version: '7.x'
+        - task: DotNetCoreCLI@2
+          displayName: 'Building main solution'
+          inputs:
+            command: 'build'
+            arguments: '--configuration $(buildConfiguration)'
+        - task: DotNetCoreCLI@2
+          displayName: 'Pulibsh all projects'
+          inputs:
+            command: 'publish'
+            projects: |
+              src/CoreDomainApi/CoreDomainApi.csproj
+              src/Identity/Identity.csproj
+              src/PublicWebApp/PublicWebApp.csproj
+            arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+            zipAfterPublish: true
+            publishWebProjects: false
+            modifyOutputPath: true
+        - task: PublishPipelineArtifact@1
+          displayName: 'Publishes the artifacts of the build'
+          inputs:
+            targetPath: '$(Build.ArtifactStagingDirectory)'
+            artifactName: 'ModerWebPlatform'
+
+    - job: deploy_websites
+      dependsOn: build_client_server_and_create_artifacts
+      condition: succeeded()
+
+      pool:
+        vmImage: ubuntu-latest
+
+      steps:
+      - checkout: none
+        # download the artifact drop from the previous job
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          source: 'current'
+          artifact: 'ModerWebPlatform'
+          path: '$(Pipeline.Workspace)'
+      - task: AzureWebApp@1
+        displayName: Deploy Identity Server
+        inputs:
+          azureSubscription: 'Azure connection'
+          appType: 'webApp'
+          appName: 'modern-web-identity'
+          resourceGroupName: 'modern-web-platform'
+          package: '$(Pipeline.Workspace)/Identity.zip'
+          deploymentMethod: 'zipDeploy'
+          appSettings:
+            -Services__Identity__Url https://modern-web-identity.azurewebsites.net
+            -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
+            -Services__PublicWebApp__Url https://modern-web-webiste.azurewebsites.net/
+            -Services__PublicWebApp__RedirectURI https://modern-web-webiste.azurewebsites.net/signin-oidc
+            -Services__PublicWebApp__PostLogoutRedirectUris https://modern-web-webiste.azurewebsites.net/signout-callback-oidc
+            -Services__PublicWebApp__Secret azuresecret
+      - task: AzureWebApp@1
+        displayName: Deploy public website
+        inputs:
+          azureSubscription: 'Azure connection'
+          appType: 'webApp'
+          appName: 'modern-web-webiste'
+          resourceGroupName: 'modern-web-platform'
+          package: '$(Pipeline.Workspace)/PublicWebApp.zip'
+          deploymentMethod: 'zipDeploy'
+          appSettings:
+            -Services__Identity__Url https://modern-web-identity.azurewebsites.net
+            -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
+            -Services__PublicWebApp__Url https://modern-web-webiste.azurewebsites.net/
+            -Services__PublicWebApp__RedirectURI https://modern-web-webiste.azurewebsites.net/signin-oidc
+            -Services__PublicWebApp__PostLogoutRedirectUris https://modern-web-webiste.azurewebsites.net/signout-callback-oidc
+            -Services__PublicWebApp__Secret azuresecret
+      - task: AzureWebApp@1
+        displayName: Deploy Core Domain API
+        inputs:
+          azureSubscription: 'Azure connection'
+          appType: 'webApp'
+          appName: 'modern-web-api'
+          resourceGroupName: 'modern-web-platform'
+          package: '$(Pipeline.Workspace)/CoreDomainApi.zip'
+          deploymentMethod: 'zipDeploy'
+          appSettings:
+            -Services__Identity__Url https://modern-web-identity.azurewebsites.net
+            -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
+            -Services__PublicWebApp__Url https://modern-web-webiste.azurewebsites.net/
+            -Services__PublicWebApp__RedirectURI https://modern-web-webiste.azurewebsites.net/signin-oidc
+            -Services__PublicWebApp__PostLogoutRedirectUris https://modern-web-webiste.azurewebsites.net/signout-callback-oidc
+            -Services__PublicWebApp__Secret azuresecret
