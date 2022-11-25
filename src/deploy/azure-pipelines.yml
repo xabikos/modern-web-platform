@@ -77,7 +77,7 @@ stages:
             azureSubscription: 'Azure connection'
             scriptType: 'bash'
             scriptLocation: 'inlineScript'
-            inlineScript: az group create --name babis --location uksouth
+            inlineScript: az group create --name $resourceGroupName --location uksouth
 
 
 
