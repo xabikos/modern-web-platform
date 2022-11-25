@@ -80,8 +80,12 @@ stages:
             inlineScript: |
               # Creating the resource group
               az group create --name $RESOURCEGROUPNAME --location uksouth
-
-
+              # Deploying Bicep file
+              az deployment group create \
+                --name $(Build.BuildNumber) \
+                --resource-group $RESOURCEGROUPNAME \
+                --template-file $(Build.SourcesDirectory)/src/deploy/environment.bicep \
+                --parameters environment=$ENVIRONMENT sqlAdministratorLogin=$SQLADMINISTRATORLOGIN sqlAdministratorPassword=$SQLADMINISTRATORPASSWORD sendGridKey=$SENDGRIDKEY twilioAccountSid=$TWILIOACCOUNTSID twilioAuthToken=$TWILIOAUTHTOKEN twilioFromNumber=$TWILIOFROMNUMBER
 
     # - job: deploy_websites
     #   dependsOn: build_client_server_and_create_artifacts
