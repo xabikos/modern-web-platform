@@ -79,9 +79,7 @@ stages:
             scriptLocation: 'inlineScript'
             inlineScript: |
               # Creating a resource group
-              az group create \
-                --name $(resourceGroupName) \
-                --location uksouth
+              az group create --name $resourceGroupName --location uksouth
 
 
 
