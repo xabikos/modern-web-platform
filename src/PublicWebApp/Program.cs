@@ -42,7 +42,7 @@ builder.Services
 	.AddCookie("cookie", options =>
 	{
 		// set session lifetime
-		options.ExpireTimeSpan = TimeSpan.FromHours(24);
+		options.ExpireTimeSpan = TimeSpan.FromDays(60);
 		// sliding or absolute
 		options.SlidingExpiration = false;
 		// host prefixed cookie name
@@ -54,19 +54,17 @@ builder.Services
 	{
 		var servicesConfig = builder.Configuration.GetRequiredSection("Services").Get<ServicesConfiguration>();
 		// The URL of the identity server
-		options.Authority = servicesConfig.Identity.Url;
+		options.Authority = servicesConfig?.Identity.Url;
 		// confidential client using code flow + PKCE
 		options.ClientId = Common.PublicWebApp.ClientId;
-		options.ClientSecret = servicesConfig.PublicWebApp.Secret;
+		options.ClientSecret = servicesConfig?.PublicWebApp.Secret;
 		options.ResponseType = "code";
-
 		// query response type is compatible with strict SameSite mode
 		options.ResponseMode = "query";
 
 		// get claims without mappings
 		options.MapInboundClaims = false;
 		options.GetClaimsFromUserInfoEndpoint = true;
-
 		// save tokens into authentication session to enable automatic token management
 		options.SaveTokens = true;
 
@@ -75,9 +73,11 @@ builder.Services
 		options.Scope.Add("openid");
 		options.Scope.Add("profile");
 		options.Scope.Add("core_domain_API");
-
 		// and refresh token
 		options.Scope.Add("offline_access");
+
+		options.TokenValidationParameters.NameClaimType = "name";
+		options.TokenValidationParameters.RoleClaimType = "role";
 	});
 
 var app = builder.Build();
@@ -101,7 +101,7 @@ app.UseEndpoints(endpoints =>
 	// Step 2: Register dynamic endpoints to serve the correct HTML files at the right request paths.
 	// Endpoints are created dynamically based on HTML files found under the specified RootPath during startup.
 	// Endpoints are currently NOT refreshed if the files later change on disk.
-    endpoints.MapNextjsStaticHtmls();
+	endpoints.MapNextjsStaticHtmls();
 });
 
 // Step 3: Serve other required files (e.g. js, css files in the exported next.js app).
