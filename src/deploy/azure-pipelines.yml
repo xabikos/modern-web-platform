@@ -70,7 +70,6 @@ stages:
       condition: succeeded()
 
       steps:
-        - checkout: none
         - task: AzureCLI@2
           displayName: 'Provision Azure resources'
           inputs:
