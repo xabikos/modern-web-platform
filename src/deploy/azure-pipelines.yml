@@ -10,9 +10,6 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  GlOBAL_RG: $(resourceGroupName)
-
 stages:
 - stage: build
   displayName: Building and artifacts creation
@@ -74,16 +71,15 @@ stages:
 
       steps:
         - checkout: none
-        - bash: echo $ RESOURCEGROUPNAME = $RESOURCEGROUPNAME
-        - bash: echo $ (resourceGroupName) = $(resourceGroupName)
-
         - task: AzureCLI@2
           displayName: 'Provision Azure resources'
           inputs:
             azureSubscription: 'Azure connection'
             scriptType: 'bash'
             scriptLocation: 'inlineScript'
-            inlineScript: az group create --name $RESOURCEGROUPNAME --location uksouth
+            inlineScript: |
+              # Creating the resource group
+              az group create --name $RESOURCEGROUPNAME --location uksouth
 
 
 
