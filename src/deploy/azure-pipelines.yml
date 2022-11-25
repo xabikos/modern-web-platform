@@ -65,55 +65,74 @@ stages:
           inputs:
             targetPath: '$(Build.ArtifactStagingDirectory)'
             artifactName: 'ModerWebPlatform'
-
-    - job: deploy_websites
+    - job: executee_biceps
       dependsOn: build_client_server_and_create_artifacts
       condition: succeeded()
 
-      pool:
-        vmImage: ubuntu-latest
-
       steps:
-      - checkout: none
-        # download the artifact drop from the previous job
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          source: 'current'
-          artifact: 'ModerWebPlatform'
-          path: '$(Pipeline.Workspace)'
-      - task: AzureWebApp@1
-        displayName: Deploy Identity Server
-        inputs:
-          azureSubscription: 'Azure connection'
-          appType: 'webApp'
-          appName: 'modern-web-identity'
-          resourceGroupName: 'modern-web-platform'
-          package: '$(Pipeline.Workspace)/Identity.zip'
-          deploymentMethod: 'zipDeploy'
-          appSettings:
-            -Services__Identity__Url https://modern-web-identity.azurewebsites.net
-            -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
-            -Services__PublicWebApp__Url https://modern-web-webiste.azurewebsites.net/
-            -Services__PublicWebApp__RedirectURI https://modern-web-webiste.azurewebsites.net/signin-oidc
-            -Services__PublicWebApp__PostLogoutRedirectUris https://modern-web-webiste.azurewebsites.net/signout-callback-oidc
-            -Services__PublicWebApp__Secret azuresecret
-      - task: AzureWebApp@1
-        displayName: Deploy public website
-        inputs:
-          azureSubscription: 'Azure connection'
-          appType: 'webApp'
-          appName: 'modern-web-webiste'
-          resourceGroupName: 'modern-web-platform'
-          package: '$(Pipeline.Workspace)/PublicWebApp.zip'
-          deploymentMethod: 'zipDeploy'
-          appSettings:
-            -Services__Identity__Url https://modern-web-identity.azurewebsites.net
-            -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
-            -Services__PublicWebApp__Url https://modern-web-webiste.azurewebsites.net/
-            -Services__PublicWebApp__RedirectURI https://modern-web-webiste.azurewebsites.net/signin-oidc
-            -Services__PublicWebApp__PostLogoutRedirectUris https://modern-web-webiste.azurewebsites.net/signout-callback-oidc
-            -Services__PublicWebApp__Secret azuresecret
-      - task: AzureWebApp@1
+        - checkout: none
+        - task: AzureCLI@2
+          displayName: 'Provision Azure resources'
+          inputs:
+            azureSubscription: 'Azure connection'
+            scriptType: 'batch'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              # Creating a resource group
+              az group create \
+                --name $(resourceGroupName) \
+                --location uksouth
+
+
+
+    # - job: deploy_websites
+    #   dependsOn: build_client_server_and_create_artifacts
+    #   condition: succeeded()
+
+    #   pool:
+    #     vmImage: ubuntu-latest
+
+    #   steps:
+    #   - checkout: none
+    #     # download the artifact drop from the previous job
+    #   - task: DownloadPipelineArtifact@2
+    #     inputs:
+    #       source: 'current'
+    #       artifact: 'ModerWebPlatform'
+    #       path: '$(Pipeline.Workspace)'
+    #   - task: AzureWebApp@1
+    #     displayName: Deploy Identity Server
+    #     inputs:
+    #       azureSubscription: 'Azure connection'
+    #       appType: 'webApp'
+    #       appName: 'modern-web-identity'
+    #       resourceGroupName: 'modern-web-platform'
+    #       package: '$(Pipeline.Workspace)/Identity.zip'
+    #       deploymentMethod: 'zipDeploy'
+    #       appSettings:
+    #         -Services__Identity__Url https://modern-web-identity.azurewebsites.net
+    #         -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
+    #         -Services__PublicWebApp__Url https://modern-web-webiste.azurewebsites.net/
+    #         -Services__PublicWebApp__RedirectURI https://modern-web-webiste.azurewebsites.net/signin-oidc
+    #         -Services__PublicWebApp__PostLogoutRedirectUris https://modern-web-webiste.azurewebsites.net/signout-callback-oidc
+    #         -Services__PublicWebApp__Secret azuresecret
+    #   - task: AzureWebApp@1
+    #     displayName: Deploy public website
+    #     inputs:
+    #       azureSubscription: 'Azure connection'
+    #       appType: 'webApp'
+    #       appName: 'modern-web-webiste'
+    #       resourceGroupName: 'modern-web-platform'
+    #       package: '$(Pipeline.Workspace)/PublicWebApp.zip'
+    #       deploymentMethod: 'zipDeploy'
+    #       appSettings:
+    #         -Services__Identity__Url https://modern-web-identity.azurewebsites.net
+    #         -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
+    #         -Services__PublicWebApp__Url https://modern-web-webiste.azurewebsites.net/
+    #         -Services__PublicWebApp__RedirectURI https://modern-web-webiste.azurewebsites.net/signin-oidc
+    #         -Services__PublicWebApp__PostLogoutRedirectUris https://modern-web-webiste.azurewebsites.net/signout-callback-oidc
+    #         -Services__PublicWebApp__Secret azuresecret
+    #   - task: AzureWebApp@1
         displayName: Deploy Core Domain API
         inputs:
           azureSubscription: 'Azure connection'
