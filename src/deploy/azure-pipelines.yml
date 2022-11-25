@@ -92,7 +92,7 @@ stages:
                 --parameters environment=$ENVIRONMENT sqlAdministratorLogin=$SQLADMINISTRATORLOGIN sqlAdministratorPassword=$SQLADMINISTRATORPASSWORD sendGridKey=$SENDGRIDKEY twilioAccountSid=$TWILIOACCOUNTSID twilioAuthToken=$TWILIOAUTHTOKEN twilioFromNumber=$TWILIOFROMNUMBER
 
     - job: deploy_websites
-      dependsOn: build_client_server_and_create_artifacts
+      dependsOn: executee_biceps
       condition: succeeded()
 
       steps:
