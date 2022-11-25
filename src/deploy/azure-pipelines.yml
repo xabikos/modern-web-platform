@@ -75,7 +75,7 @@ stages:
           displayName: 'Provision Azure resources'
           inputs:
             azureSubscription: 'Azure connection'
-            scriptType: 'batch'
+            scriptType: 'bash'
             scriptLocation: 'inlineScript'
             inlineScript: |
               # Creating a resource group
