@@ -65,10 +65,15 @@ stages:
           inputs:
             targetPath: '$(Build.ArtifactStagingDirectory)'
             artifactName: 'ModerWebPlatform'
-    - job: executee_biceps
-      dependsOn: build_client_server_and_create_artifacts
-      condition: succeeded()
 
+
+- stage: apply_templates_and_deply
+  displayName: Apply the templates and template the resources
+  dependsOn: build_client_server_and_create_artifacts
+  condition: succeeded()
+  jobs:
+    - job: executee_biceps
+      displayName: Applyin the templates
       steps:
         - task: AzureCLI@2
           displayName: 'Provision Azure resources'
@@ -86,37 +91,34 @@ stages:
                 --template-file $(Build.SourcesDirectory)/src/deploy/environment.bicep \
                 --parameters environment=$ENVIRONMENT sqlAdministratorLogin=$SQLADMINISTRATORLOGIN sqlAdministratorPassword=$SQLADMINISTRATORPASSWORD sendGridKey=$SENDGRIDKEY twilioAccountSid=$TWILIOACCOUNTSID twilioAuthToken=$TWILIOAUTHTOKEN twilioFromNumber=$TWILIOFROMNUMBER
 
-    # - job: deploy_websites
-    #   dependsOn: build_client_server_and_create_artifacts
-    #   condition: succeeded()
+    - job: deploy_websites
+      dependsOn: build_client_server_and_create_artifacts
+      condition: succeeded()
 
-    #   pool:
-    #     vmImage: ubuntu-latest
-
-    #   steps:
-    #   - checkout: none
-    #     # download the artifact drop from the previous job
-    #   - task: DownloadPipelineArtifact@2
-    #     inputs:
-    #       source: 'current'
-    #       artifact: 'ModerWebPlatform'
-    #       path: '$(Pipeline.Workspace)'
-    #   - task: AzureWebApp@1
-    #     displayName: Deploy Identity Server
-    #     inputs:
-    #       azureSubscription: 'Azure connection'
-    #       appType: 'webApp'
-    #       appName: 'modern-web-identity'
-    #       resourceGroupName: 'modern-web-platform'
-    #       package: '$(Pipeline.Workspace)/Identity.zip'
-    #       deploymentMethod: 'zipDeploy'
-    #       appSettings:
-    #         -Services__Identity__Url https://modern-web-identity.azurewebsites.net
-    #         -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
-    #         -Services__PublicWebApp__Url https://modern-web-webiste.azurewebsites.net/
-    #         -Services__PublicWebApp__RedirectURI https://modern-web-webiste.azurewebsites.net/signin-oidc
-    #         -Services__PublicWebApp__PostLogoutRedirectUris https://modern-web-webiste.azurewebsites.net/signout-callback-oidc
-    #         -Services__PublicWebApp__Secret azuresecret
+      steps:
+      - checkout: none
+        # download the artifact drop from the previous job
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          source: 'current'
+          artifact: 'ModerWebPlatform'
+          path: '$(Pipeline.Workspace)'
+      - task: AzureWebApp@1
+        displayName: Deploy Identity Server
+        inputs:
+          azureSubscription: 'Azure connection'
+          appType: 'webApp'
+          appName: 'identity-cellarrats-dev'
+          resourceGroupName: '$(resourceGroupName)'
+          package: '$(Pipeline.Workspace)/Identity.zip'
+          deploymentMethod: 'zipDeploy'
+          # appSettings:
+          #   -Services__Identity__Url https://modern-web-identity.azurewebsites.net
+          #   -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
+          #   -Services__PublicWebApp__Url https://modern-web-webiste.azurewebsites.net/
+          #   -Services__PublicWebApp__RedirectURI https://modern-web-webiste.azurewebsites.net/signin-oidc
+          #   -Services__PublicWebApp__PostLogoutRedirectUris https://modern-web-webiste.azurewebsites.net/signout-callback-oidc
+          #   -Services__PublicWebApp__Secret azuresecret
     #   - task: AzureWebApp@1
     #     displayName: Deploy public website
     #     inputs:
