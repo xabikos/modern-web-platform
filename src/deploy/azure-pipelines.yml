@@ -69,7 +69,7 @@ stages:
 
 - stage: apply_templates_and_deply
   displayName: Apply the templates and template the resources
-  dependsOn: build_client_server_and_create_artifacts
+  dependsOn: build
   condition: succeeded()
   jobs:
     - job: executee_biceps
