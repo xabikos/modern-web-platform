@@ -53,7 +53,7 @@ param twilioFromNumber string
 
 // SQL Server and databases region
 
-var sqlserverName = 'sqlServer-${environment}-cellarrats'
+var sqlserverName = 'sqlServer-${environment}-xab'
 
 resource sqlServer 'Microsoft.Sql/servers@2022-05-01-preview' = {
   name: sqlserverName
@@ -88,10 +88,37 @@ resource identitySqlDatabase 'Microsoft.Sql/servers/databases@2022-05-01-preview
   }
 }
 
+// Log Analytics workspace and AppInsights
+var logAnalyticsWorkspaceName = 'loganalytis-${environment}-xab'
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
+  name: logAnalyticsWorkspaceName
+  location: location
+  properties: {
+    sku: {
+      name: 'PerGB2018'
+    }
+    retentionInDays: 90
+    features: {
+      enableLogAccessUsingOnlyResourcePermissions: true
+    }
+  }
+}
+
+var appInsightsName = 'appInsights-${environment}-xab'
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: appInsightsName
+  location: location
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+    WorkspaceResourceId: logAnalyticsWorkspace.id
+  }
+}
+
 // App service plans and App Services region
 
 resource servicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
-  name: 'cellarrats-plan'
+  name: 'xab-plan'
   location: location
   kind: 'linux'
   sku: {
@@ -102,9 +129,9 @@ resource servicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   }
 }
 
-var identitySiteName = 'identity-cellarrats-${environment}'
+var identitySiteName = 'identity-xab-${environment}'
 var coreApiSiteName = 'api-cellarrtas-${environment}'
-var websiteName = 'web-cellarrats-${environment}'
+var websiteName = 'web-xab-${environment}'
 
 var commonAppSettings = [
   { name: 'SendGridKey', value: sendGridKey }
