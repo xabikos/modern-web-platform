@@ -73,7 +73,7 @@ stages:
   condition: succeeded()
   jobs:
     - job: executee_biceps
-      displayName: Applyin the templates
+      displayName: Applying the templates
       steps:
         - task: AzureCLI@2
           displayName: 'Provision Azure resources'
@@ -94,7 +94,6 @@ stages:
     - job: deploy_websites
       dependsOn: executee_biceps
       condition: succeeded()
-
       steps:
       - checkout: none
         # download the artifact drop from the previous job
@@ -112,13 +111,6 @@ stages:
           resourceGroupName: '$(resourceGroupName)'
           package: '$(Pipeline.Workspace)/Identity.zip'
           deploymentMethod: 'zipDeploy'
-          # appSettings:
-          #   -Services__Identity__Url https://modern-web-identity.azurewebsites.net
-          #   -Services__CoreDomainAPI__Url https://modern-web-api.azurewebsites.net/
-          #   -Services__PublicWebApp__Url https://modern-web-webiste.azurewebsites.net/
-          #   -Services__PublicWebApp__RedirectURI https://modern-web-webiste.azurewebsites.net/signin-oidc
-          #   -Services__PublicWebApp__PostLogoutRedirectUris https://modern-web-webiste.azurewebsites.net/signout-callback-oidc
-          #   -Services__PublicWebApp__Secret azuresecret
     #   - task: AzureWebApp@1
     #     displayName: Deploy public website
     #     inputs:
