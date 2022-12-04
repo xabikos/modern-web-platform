@@ -25,46 +25,46 @@ stages:
           inputs:
             command: 'install'
             workingDir: 'src/PublicWebApp/client-app'
-        - task: Npm@1
-          displayName: 'Creating the static version of the website'
-          inputs:
-            command: 'custom'
-            customCommand: 'run export'
-            workingDir: 'src/PublicWebApp/client-app'
-        - task: CopyFiles@2
-          displayName: 'Copy the static files to wwwroot folder of the public webste'
-          inputs:
-            SourceFolder: 'src/PublicWebApp/client-app/out'
-            Contents: '**'
-            TargetFolder: 'src/PublicWebApp/wwwroot'
+        # - task: Npm@1
+        #   displayName: 'Creating the static version of the website'
+        #   inputs:
+        #     command: 'custom'
+        #     customCommand: 'run export'
+        #     workingDir: 'src/PublicWebApp/client-app'
+        # - task: CopyFiles@2
+        #   displayName: 'Copy the static files to wwwroot folder of the public webste'
+        #   inputs:
+        #     SourceFolder: 'src/PublicWebApp/client-app/out'
+        #     Contents: '**'
+        #     TargetFolder: 'src/PublicWebApp/wwwroot'
 
-        - task: UseDotNet@2
-          displayName: 'Installing .NET 7'
-          inputs:
-            packageType: 'sdk'
-            version: '7.x'
-        - task: DotNetCoreCLI@2
-          displayName: 'Building main solution'
-          inputs:
-            command: 'build'
-            arguments: '--configuration $(buildConfiguration)'
-        - task: DotNetCoreCLI@2
-          displayName: 'Pulibsh all projects'
-          inputs:
-            command: 'publish'
-            projects: |
-              src/CoreDomainApi/CoreDomainApi.csproj
-              src/Identity/Identity.csproj
-              src/PublicWebApp/PublicWebApp.csproj
-            arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-            zipAfterPublish: true
-            publishWebProjects: false
-            modifyOutputPath: true
-        - task: PublishPipelineArtifact@1
-          displayName: 'Publishes the artifacts of the build'
-          inputs:
-            targetPath: '$(Build.ArtifactStagingDirectory)'
-            artifactName: 'ModerWebPlatform'
+        # - task: UseDotNet@2
+        #   displayName: 'Installing .NET 7'
+        #   inputs:
+        #     packageType: 'sdk'
+        #     version: '7.x'
+        # - task: DotNetCoreCLI@2
+        #   displayName: 'Building main solution'
+        #   inputs:
+        #     command: 'build'
+        #     arguments: '--configuration $(buildConfiguration)'
+        # - task: DotNetCoreCLI@2
+        #   displayName: 'Pulibsh all projects'
+        #   inputs:
+        #     command: 'publish'
+        #     projects: |
+        #       src/CoreDomainApi/CoreDomainApi.csproj
+        #       src/Identity/Identity.csproj
+        #       src/PublicWebApp/PublicWebApp.csproj
+        #     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+        #     zipAfterPublish: true
+        #     publishWebProjects: false
+        #     modifyOutputPath: true
+        # - task: PublishPipelineArtifact@1
+        #   displayName: 'Publishes the artifacts of the build'
+        #   inputs:
+        #     targetPath: '$(Build.ArtifactStagingDirectory)'
+        #     artifactName: 'ModerWebPlatform'
 
 
 - stage: apply_templates_and_deply

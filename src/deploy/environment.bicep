@@ -150,7 +150,6 @@ var commonAppSettings = [
 resource identitySite 'Microsoft.Web/sites@2022-03-01' = {
   name: identitySiteName
   location: location
-  dependsOn: [ appInsights ]
   properties: {
     serverFarmId: servicePlan.id
     siteConfig: {
