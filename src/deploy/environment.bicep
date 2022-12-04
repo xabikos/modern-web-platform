@@ -144,11 +144,13 @@ var commonAppSettings = [
   { name: 'Services__Twilio__AccountSid', value: twilioAccountSid }
   { name: 'Services__Twilio__AuthToken', value: twilioAuthToken }
   { name: 'Services__Twilio__FromNumber', value: twilioFromNumber }
+  { name: 'APPINSIGHTS_INSTRUMENTATIONKEY', value: appInsights.properties.InstrumentationKey }
 ]
 
 resource identitySite 'Microsoft.Web/sites@2022-03-01' = {
   name: identitySiteName
   location: location
+  dependsOn: [ appInsights ]
   properties: {
     serverFarmId: servicePlan.id
     siteConfig: {
@@ -169,5 +171,13 @@ resource identityConnectionString 'Microsoft.Web/sites/config@2022-03-01' = {
       type: 'SQLAzure'
     }
   }
+}
+
+resource appServiceSiteExtension 'Microsoft.Web/sites/siteextensions@2020-06-01' = {
+  parent: identitySite
+  name: 'Microsoft.ApplicationInsights.AzureWebSites'
+  dependsOn: [
+    appInsights
+  ]
 }
 
