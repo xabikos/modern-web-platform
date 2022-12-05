@@ -144,13 +144,14 @@ var commonAppSettings = [
   { name: 'Services__Twilio__AccountSid', value: twilioAccountSid }
   { name: 'Services__Twilio__AuthToken', value: twilioAuthToken }
   { name: 'Services__Twilio__FromNumber', value: twilioFromNumber }
-  { name: 'APPINSIGHTS_INSTRUMENTATIONKEY', value: appInsights.properties.InstrumentationKey }
-  { name: 'APPINSIGHTS_PROFILERFEATURE_VERSION', value: '1' }
-  { name: 'APPINSIGHTS_SNAPSHOTFEATURE_VERSION', value: '1' }
-  { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: appInsights.properties.ConnectionString }
-  { name: 'ApplicationInsightsAgent_EXTENSION_VERSION', value: '~2' }
-  { name: 'DiagnosticServices_EXTENSION_VERSION', value: '~3' }
-  { name: 'XDT_MicrosoftApplicationInsights_BaseExtensions', value: '~1' }
+  // { name: 'APPINSIGHTS_INSTRUMENTATIONKEY', value: appInsights.properties.InstrumentationKey }
+  // { name: 'APPINSIGHTS_PROFILERFEATURE_VERSION', value: '1' }
+  // { name: 'APPINSIGHTS_SNAPSHOTFEATURE_VERSION', value: '1' }
+  // { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: appInsights.properties.ConnectionString }
+  // { name: 'ApplicationInsightsAgent_EXTENSION_VERSION', value: '~2' }
+  // { name: 'DiagnosticServices_EXTENSION_VERSION', value: '~3' }
+  // { name: 'InstrumentationEngine_EXTENSION_VERSION', value: '~1' }
+  // { name: 'XDT_MicrosoftApplicationInsights_BaseExtensions', value: '~1' }
 ]
 
 resource identitySite 'Microsoft.Web/sites@2022-03-01' = {
@@ -178,11 +179,11 @@ resource identityConnectionString 'Microsoft.Web/sites/config@2022-03-01' = {
   }
 }
 
-resource appServiceSiteExtension 'Microsoft.Web/sites/siteextensions@2020-06-01' = {
-  parent: identitySite
-  name: 'Microsoft.ApplicationInsights.AzureWebSites'
-  dependsOn: [
-    appInsights
-  ]
-}
+// resource appServiceSiteExtension 'Microsoft.Web/sites/siteextensions@2020-06-01' = {
+//   parent: identitySite
+//   name: 'Microsoft.ApplicationInsights.AzureWebSites'
+//   dependsOn: [
+//     appInsights
+//   ]
+// }
 
