@@ -93,16 +93,13 @@ app.UseAuthentication();
 app.UseBff();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-	endpoints.MapBffManagementEndpoints();
-	endpoints.MapControllers().AsBffApiEndpoint().RequireAuthorization();
+app.MapControllers().AsBffApiEndpoint();
+app.MapBffManagementEndpoints();
 
-	// Step 2: Register dynamic endpoints to serve the correct HTML files at the right request paths.
-	// Endpoints are created dynamically based on HTML files found under the specified RootPath during startup.
-	// Endpoints are currently NOT refreshed if the files later change on disk.
-    endpoints.MapNextjsStaticHtmls();
-});
+// Step 2: Register dynamic endpoints to serve the correct HTML files at the right request paths.
+// Endpoints are created dynamically based on HTML files found under the specified RootPath during startup.
+// Endpoints are currently NOT refreshed if the files later change on disk.
+app.MapNextjsStaticHtmls();
 
 // Step 3: Serve other required files (e.g. js, css files in the exported next.js app).
 app.UseNextjsStaticHosting();

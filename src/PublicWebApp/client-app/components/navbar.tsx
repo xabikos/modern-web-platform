@@ -11,9 +11,6 @@ export default function Navbar() {
               <Link className="nav-link" href="/">Home</Link>
             </li>
             <li className="nav-item px-2">
-              <Link className="nav-link" href="/laptops">Laptops</Link>
-            </li>
-            <li className="nav-item px-2">
               <Link className="nav-link" href="/values">Values</Link>
             </li>
           </ul>
